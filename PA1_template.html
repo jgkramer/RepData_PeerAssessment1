@@ -461,13 +461,15 @@ weekend &lt;- function(day) {
   else f[1]
 }
 
-activityFilled$day_type &lt;- sapply(weekdays(activityFilled$date), weekend)
-
-grouped &lt;- group_by(activityFilled, interval, day_type)
+activityFilled$day_type &lt;- sapply(weekdays(activityFilled$date), weekend)</code></pre>
+<p>Next, we group the new data set by both interval and by the type of day (weekend / weekday).</p>
+<p>Then, for each interval / day type combination, we compute the mean number of steps.</p>
+<pre class="r"><code>grouped &lt;- group_by(activityFilled, interval, day_type)
 steps_by_interval2 &lt;- summarise(grouped, steps = mean(steps))</code></pre>
 <pre><code>## `summarise()` regrouping output by &#39;interval&#39; (override with `.groups` argument)</code></pre>
 <pre class="r"><code>steps_weekday &lt;- steps_by_interval2[steps_by_interval2$day_type == &quot;weekday&quot;, ]
 steps_weekend &lt;- steps_by_interval2[steps_by_interval2$day_type == &quot;weekend&quot;, ]</code></pre>
+<p>Finally, we plot, for both weekdays and weekends, the average number of steps in each interval.</p>
 <pre class="r"><code>par(mfrow = c(2, 1), mar = c(4, 4, 3, 1))
 plot(steps_weekday$interval, steps_weekday$steps, type = &quot;l&quot;, main = &quot;Weekday&quot;, 
      xlab = &quot;Interval&quot;, ylab = &quot;Average Steps&quot;)
