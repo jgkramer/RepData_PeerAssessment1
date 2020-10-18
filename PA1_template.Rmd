@@ -1,25 +1,64 @@
----
-title: "Reproducible Research: Peer Assessment 1"
-output: 
-  html_document:
-    keep_md: true
----
+
+Programming Assignment #1
+=========================
+Jared Kramer
 
 
-## Loading and preprocessing the data
+```{r setup, echo = TRUE}
+knitr::opts_chunk$set(echo = TRUE)
+```
 
 
+### 1. Loading and Processing the Data
 
-## What is mean total number of steps taken per day?
+First, unzip the activity data if necessary, and read in the csv file into a data frame. 
+To allow for splitting by date for later analysis, we convert the date field into factors. 
+
+```{r getdata}
+  if(!file.exists("activity.csv")){
+    unzip("activity.zip")
+  }
+
+  activityDF <- read.csv("activity.csv")
+  activityDF$date <- as.Date(activityDF$date)
+  
+```
 
 
+### 2. What is the mean total of steps taken per day?
 
-## What is the average daily activity pattern?
+In this section, we split the "steps" column of the data frame, according to the date of each observation.  
+
+```{r dailysteps}
+  steps_by_day <- split(activityDF$steps, activityDF$date)
+  dailysteps <- sapply(steps_by_day, sum)
+  hist(dailysteps, breaks = 20, main = "Histogram of Steps per Day", xlab = "Daily number of Steps")
+```
+
+Ignoring NA's, we then compute the mean and the median, and display it inline below.
+
+```{r meanmedian}
+  mean1 <- mean(dailysteps, na.rm = TRUE)
+  median1 <- median(dailysteps, na.rm = TRUE)
+```
+
+The mean is `r as.character(mean1)` and the median is `r as.character(median1)`.
+
+### 3. What is the average daily activity pattern? 
+
+In this section, we split the "steps" column of the data frame, according to the time interval of each observation. 
+
+```{r intervalsteps}
+  steps_by_interval <- split(activityDF$steps, activityDF$interval)
+  intervalsteps <- sapply(steps_by_interval, mean, na.rm = TRUE)
+  
+  max_interval <- names(intervalsteps)[which.max(intervalsteps)]
+  
+  plot(x = names(intervalsteps), y = intervalsteps, type = "l", 
+       xlab = "Average Steps in Time Interval", 
+       ylab = "Time Interval")
+```
+
+The interval with the maximum average number of steps per day is `r max_interval`
 
 
-
-## Imputing missing values
-
-
-
-## Are there differences in activity patterns between weekdays and weekends?
